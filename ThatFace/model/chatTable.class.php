@@ -26,7 +26,26 @@ class chatTable {
 
     /*
      *  auteur : EL KHATTAB Mahmoud
-     * cette méthode permet de retourner l'le dernier message posté sur un chat
+     * cette méthode permet de retourner les 20 derniers derniers chats
+    */
+    public static function getLastchats(){
+
+        $em = dbconnection::getInstance()->getEntityManager() ;
+        $qb = $em->createQueryBuilder();
+		$qb->select('c')
+			->from('chat','c')
+			->from('post','p')
+			->where('c.post = p.id') 
+			->orderBy('c.id','DESC')
+			->setMaxResults(20);
+        $query = $qb->getQuery();
+        $results = $query->getResult();
+	 
+        return $results;
+    }
+	/*
+     *  auteur : EL KHATTAB Mahmoud
+     * cette méthode permet de retourner le dernier chat posté 
     */
     public static function getLastchat(){
 
@@ -36,16 +55,37 @@ class chatTable {
 			->from('chat','c')
 			->from('post','p')
 			->where('c.post = p.id') 
-			->orderBy('c.id','DESC');
+			->orderBy('c.id','DESC')
+			->setMaxResults(1);
+        $query = $qb->getQuery();
+        $results = $query->getResult();
+	 
+        return current($results);
+    }
+	/*
+     *  auteur : EL KHATTAB Mahmoud
+     * cette méthode permet de retourner les chats les plus récents après 
+	 * le chat dont l'id est donnée en paramètres
+    */
+	public static function getRecentChats($id){
+
+        $em = dbconnection::getInstance()->getEntityManager() ;
+        $qb = $em->createQueryBuilder();
+		$qb->select('c')
+			->from('chat','c')
+			->from('post','p')
+			->where('c.post = p.id')
+			->andWhere('c.id>'.$id)
+			->orderBy('c.id','ASC') //************* à remplacer par DESC
+			->setMaxResults(2);
         $query = $qb->getQuery();
         $results = $query->getResult();
 	 
         return $results;
     }
-
     /*
      *  auteur : EL KHATTAB Mahmoud
-     * cette méthode permet de retourner le dernier message posté sur un chat donné par son id
+     *  cette méthode permet de retourner le dernier message posté sur un chat donné par son id
     */
 
     public static function getLastChatById($id){
@@ -69,7 +109,7 @@ class chatTable {
 	 *  auteur : EL KHATTAB Mahmoud
 	 * cette méthode permet d'ajouter un chat à la base de données en ajoutant également le post et l'utilisateur associé
 	*/
-	public static function addChat($request){
+	public static function addChat($request,$context){
 	
 		$em = dbconnection::getInstance()->getEntityManager() ;
 		
@@ -85,8 +125,8 @@ class chatTable {
 		$chat->post = $post ;
 		$chat->emetteur = $user ;
 		$em->persist($chat);
+		$_SESSION['chatid'] = $chat->id ;
 		$em->flush();
-		
 //		return $chat;
 	
 	}

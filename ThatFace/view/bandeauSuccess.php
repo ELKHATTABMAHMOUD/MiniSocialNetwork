@@ -1,28 +1,41 @@
-     <nav class="navbar navbar-inverse" id="bandeau">
+<!--     <nav class="navbar navbar-inverse" id="bandeau">
         <div class="container-fluid">
 
-            <div class="form-group">
-				<button class="btn btn-primary btn-sm deconnexion"><a href="ajaxDispatcher.php?action=logout"> deconnexion </a></button>	
-            </div>
+            
 
         </div>
     </nav>
+	-->
+<div class="panel-footer" >
+	<div class="input-group row" style="margin-left: 87%;">
+		<div class="input-group-btn">
+			<button class="btn btn-primary btn-sm" id="home">Home</button>
+		</div>
+		<div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+		</div>
+		<div class="input-group-btn ">
+			<button class="btn btn-primary btn-sm" id="logout" >Log Out</button>
+		</div>
+		
+		
+		
+	</div>
+	
+		
 
-<!--
-	<script type="text/javascript">
+</div>
 
-		$('form.deconnexion').on('submit',function(){
-		    var that = $(this);
-		    url = that.attr('action');
-		    type = that.attr('method');
-		    $.ajax({
-		      url : url ,
-		      type : type,
-		      success: function(response){
-				alert('mahùmouuuuuuuuuud');
-		      }
-		    });
-		    return false ;
-		});
-	</script>
--->
+<script type="text/javascript">
+
+	/*En cas de redirection vers la page d'accueil */
+	$('#home').on('click',function(){
+		location.replace("ThatFace.php");
+		
+	});
+	/* En cas de connexion */
+	$('#logout').on('click',function(){
+		location.replace("ThatFace.php?action=logout");
+	});
+	
+	
+</script>

@@ -8,15 +8,18 @@
 
 class mainController{	
 	
+	/* 
+	 * Réalisé par : EL KHATTAB Mahmoud
+	 */
 	public static function login($request,$context){
 	
 		if(isset($_SESSION['user'])){
 			
-			$context->user	 =  utilisateurTable::getUserByLoginAndPass('alibaba','alibaba');
-			$context->chats  =  chatTable::getLastChat() ;
-			$context->friends =  utilisateurTable::getUsers();
-			$context->messages =  messageTable::getMessages();
-			$context->setSessionAttribute('user',$context->user) ;
+			$context->profile	=  $_SESSION['user'];
+			$context->chats  	=  chatTable::getLastChats() ;
+			$context->friends 	=  utilisateurTable::getUsers();
+			$context->messages 	=  messageTable::getMessages();
+		//	$context->setSessionAttribute('user',$context->user) ;
 			return context::SUCCESS;
 		}
 		else{
@@ -26,13 +29,14 @@ class mainController{
 				$login = $_POST['pseudo'];
 				$password  = $_POST['pass'];
 				
-				$context->user	 =  utilisateurTable::getUserByLoginAndPass('alibaba','alibaba');
+				$context->user	 =  utilisateurTable::getUserByLoginAndPass($login,$password);
 
 				if($context->user != null){
 					$context->friends =  utilisateurTable::getUsers();
 					$context->messages =  messageTable::getMessages();
-					$context->chats  =  chatTable::getLastChat() ;
+					$context->chats  =  chatTable::getLastChats() ;
 					$context->setSessionAttribute('user',$context->user) ;
+					$context->profile = $context->user ;
 					return context::SUCCESS ;
 				}				
 				return context::ERROR;
@@ -45,15 +49,15 @@ class mainController{
 	//return context::ERROR;
 	}
 	public static function logout($request,$context){
-	
 		unset($_SESSION['user']);
-		$url = "ThatFace.php";
-		return context::ERROR;
+		return context::SUCCESS ;
+		
 	}
 	public static function helloWorld($request,$context)
 	{
 		$context->mavariable="hello world";
-		return context::SUCCESS;
+		echo "";
+		//return context::SUCCESS;
 	}
 
 
@@ -64,15 +68,14 @@ class mainController{
 
 	/* 
 	 * Réalisé par : EL KHATTAB Mahmoud
-	 * action qui permet de dérouter l'execution de la fonction d'ajout d'un chat à la base de données et affiche un message 		 * en retour à la fonction de callback ajax 
-	 * la fonction de mise à jour est dans la classe utilisateurTable  
+	 * action qui permet de dérouter l'execution de la fonction d'ajout d'un chat 
+	 * à la base de données et affiche un message en retour à la fonction de callback
+	 * ajax la fonction de mise à jour est dans la classe utilisateurTable  
 	 */
 	public static function addChat($request, $context){
-	//	echo json_encode("ajout du chat avec succès") ;
-		
-	//	$user = $context->user ;
-	//	$chat = chatTable::addChat($request);
-		echo 'ajout du chat avec succès';
+
+		$chat = chatTable::addChat($request,$context);
+	//	echo 'ajout du chat avec succès'.$_SESSION['lastChatId'];
 
 	}
 	/* 
@@ -82,8 +85,64 @@ class mainController{
 	 */	
 	public static function updateStatut($request, $context){
 		utilisateurTable::updateStatut($request);
-		echo json_encode('statut updated');
+	}
+	/*
+	*
+	*/
+	
+	public static function lastStats($request,$context){
+	
+		$recentchats ='';
+		if(!isset($_SESSION['chatid'])){
+			$dernierchat = chatTable::getLastchat();  		
+			
+			$_SESSION['chatid'] = $dernierchat->id ;
+		}
+		else{
+			$recentchats = chatTable::getRecentChats($_SESSION['chatid']);
+			if(count($recentchats)> 0){
+				$i = count($recentchats) ;
+				$_SESSION['chatid'] = $recentchats[$i-1]->id ;
+			}
+		}
+		
+		$html='';
+		foreach($recentchats as $chat){
+			$text   = htmlspecialchars($chat->post->texte);
+			$date   = htmlspecialchars($chat->post->date->format('d-m-y:H:m:s')) ;
+			$prenom = htmlspecialchars($chat->emetteur->prenom) ;
+			$nom    = htmlspecialchars($chat->emetteur->nom);
+			if($chat->emetteur->avatar!=null){
+				$image  = htmlspecialchars($chat->emetteur->avatar);
+			}
+			$message = '<div class="row msg_container base_receive">
+							<div class="col-md-2 col-xs-2 col-lg-2 avatar ">
+								<img src="'.$image.'class="img-responsive" style="height:40px; width:50px">
+							</div>
+							<div class="col-md-10 col-xs-10 col-lg-10 col-xl-10">
+								<div class="messages msg_receive">
+									<p><span>'.$text.'</span></p>
+									<time datetime="'.$date.'">'.$prenom.' Le :'.$date.'<br></time>
+								</div>
+							</div>
+						</div>';
+			$avatar  =  	'';
+			$html = $message.''.$avatar.''.$html;
+		}
+		echo $html;
 	}
 	
+	/* 
+	 * =========================    Réalisé par : EL KHATTAB Mahmoud    ======================
+	 * action qui permet de dérouter l'affichage d'un profile autre que celui de l'utilisateur
+	 * =======================================================================================
+	 */	
+	public static function otherProfile($request, $context){
+		$id = $_GET['id'];
+		$context->profile = utilisateurTable::getUserById($id);
+		$context->chats  	=  chatTable::getLastChats() ;
+		$context->friends 	=  utilisateurTable::getUsers();
+		$context->messages 	=  messageTable::getMessages();
+	}
 }
 ?>

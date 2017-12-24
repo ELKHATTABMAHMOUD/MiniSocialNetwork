@@ -9,7 +9,8 @@
 
 	$messages = $context->messages;
 	foreach($messages as $message) {
-		echo "Message de ".$message->emetteur->nom." ".$message->emetteur->prenom." : ".$message->post->texte."<br>";
+		
+		echo "Message de ".htmlspecialchars($message->emetteur->nom)." ".htmlspecialchars($message->emetteur->prenom)." : ".htmlspecialchars($message->post->texte)."<br>";
 	}
 	
 ?>

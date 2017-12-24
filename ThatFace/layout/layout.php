@@ -1,42 +1,71 @@
+<?php
+/**
+ * EL KHATTAB, Harkiolakis
+ * Layout qui organise l'architecture graphique du site
+ */
+?>
 
+<?php
+	if(isset($_SESSION['user']) ){
+		$user = $_SESSION['user'] ; 
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>ThatFace</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/mystyle.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="css/chatcss.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">	
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" > </script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<!-- j'ai le droit de mettre des commentaires dans mon fichier HTML -->
+</head>
 
-	<div class="wrapper">
-		<div class="container">
+<body>
+	<?php  include("ThatFace/view/bandeauSuccess.php"); ?>
+	<div class="contenu">
+		<div class="row">
+			<div class="alert alert-success" id="st_success" style="display:none">
 			
-			<h2 id="super" style="margin-top:15px">Super c'est ton appli ! </h2>
-			<!-- inclusion de la view de connexion -->
-			<?php
-				 include($template_view);
-			?>
-
+			</div>
+			<div class="alert alert-danger" id="st_error" style="display:none">
+				
+			</div>
+			<div class=" col-sm-4 col-md-3 col-lg-3 hidden-xs">
+				<?php   include("ThatFace/view/profil.php"); ?>
+				<div >
+				<?php  include("ThatFace/view/friends.php");?>
+				</div>
+			</div>
+			
+			<div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
+				<?php  include("ThatFace/view/wall.php"); ?>
+			</div> 
+			<div class="col-md-3 col-lg-3 hidden-xs hidden-sm chatbox ">
+				<div  id="draggable" >
+					<?php include("ThatFace/view/chat.php");?> 
+				</div>
+			</div> 
+			
 		</div>
 	</div>
-	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-	<script type="js/index.js"></script>
-	<script type="text/javascript">
+<!--   partie chat -->
+	<script src="js/jquery-ui.min.js"></script>
+	
+	<script src="js/myjs/addchat.js"  > </script>
+	<script src="js/myjs/updatestatut.js"  > </script>
+	<script src="js/myjs/chatbox.js"  > </script>
+</body>
+</html>
 
-		$('form.ajax').on('submit',function(){
-			var that = $(this);
-			url = that.attr('action');
-			type = that.attr('method');
-			data = {};
-			that.find('[name]').each(function(){
-				var that = $(this);
-				name = that.attr('name');
-				value= that.val();
-				data[name]= value ;
-			});
-			$.ajax({
-				url : url ,
-				type : type,
-				data : data,
-				success: function(response){
-					$(document).load('ThatFace/view/logoutSuccess.php');
-					$('form.ajax').remove();
-				}
-			});
-			return false ;
-		});
-	</script>
+<?php 
+   }
+   else{
+	   include "layout_login.php";
+   }
+   
+?>

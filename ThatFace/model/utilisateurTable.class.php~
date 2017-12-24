@@ -30,6 +30,7 @@ class utilisateurTable  {
 
 	public static function getUsers(){
 		$em = dbconnection::getInstance()->getEntityManager() ;
+
 		$userRepository = $em->getRepository('utilisateur');
 		$users=$userRepository->findAll();
 		return $users;
@@ -42,8 +43,8 @@ class utilisateurTable  {
 		return $em;
 	}
 	   /*
-	    * ===================================================================================
-	    * =================== Réalisé par : EL KHATTAB Mahmoud ==============================
+	    	* ===================================================================================
+	    	* =================== Réalisé par : EL KHATTAB Mahmoud ==============================
 		* ===================================================================================
 	   */
 	public function updateStatut($request){
@@ -52,11 +53,8 @@ class utilisateurTable  {
 		$id		= $_SESSION['user']->id ;
 		$user 	= utilisateurTable::getUserById($id);
 		$user->statut = $_POST['newstatut'] ;
-		$_SESSION['user']->statut = $_POST['newstatut'];
 		$em->persist($user);
 		$em->flush();
-		$b = utilisateurTable::getUserById(42);
-		echo "Statut modifié avec success";
 
 	}
 

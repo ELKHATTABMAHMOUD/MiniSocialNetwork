@@ -8,11 +8,14 @@
 
 class mainController{	
 	
+	/* 
+	 * Réalisé par : EL KHATTAB Mahmoud
+	 */
 	public static function login($request,$context){
 	
 		if(isset($_SESSION['user'])){
 			
-			$context->user	 =  utilisateurTable::getUserByLoginAndPass('alibaba','alibaba');
+			$context->user	 =  $_SESSION['user'];
 			$context->chats  =  chatTable::getLastChat() ;
 			$context->friends =  utilisateurTable::getUsers();
 			$context->messages =  messageTable::getMessages();
@@ -26,7 +29,7 @@ class mainController{
 				$login = $_POST['pseudo'];
 				$password  = $_POST['pass'];
 				
-				$context->user	 =  utilisateurTable::getUserByLoginAndPass('alibaba','alibaba');
+				$context->user	 =  utilisateurTable::getUserByLoginAndPass($login,$password);
 
 				if($context->user != null){
 					$context->friends =  utilisateurTable::getUsers();
@@ -68,7 +71,7 @@ class mainController{
 	 * la fonction de mise à jour est dans la classe utilisateurTable  
 	 */
 	public static function addChat($request, $context){
-		$user = $context->user ;
+
 		$chat = chatTable::addChat($request);
 		echo 'ajout du chat avec succès';
 
@@ -80,7 +83,7 @@ class mainController{
 	 */	
 	public static function updateStatut($request, $context){
 		utilisateurTable::updateStatut($request);
-		echo 'mise à jour du statut réussie';
+		echo json_encode('statut updated');
 	}
 	
 }
